@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DP Tennis Center</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        // Custom Tailwind CSS configuration to match logo colors
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dp-dark-blue': '#1A2F5B', // Dark blue from the logo
+                        'dp-deep-blue': '#102040', // A slightly deeper blue for gradients/shadows
+                        'dp-light-green': '#82C033', // Light green from the logo
+                        'dp-light-gray': '#F0F2F5', // Background color for the body
+                        'dp-medium-gray': '#E0E0E0', // For borders or subtle backgrounds
+                        'dp-text-dark': '#333333', // Dark text
+                        'dp-text-light': '#ffffff', // Light text
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: theme('colors.dp-light-gray');
+            color: theme('colors.dp-text-dark');
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        /* Custom spinner for loading states */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid theme('colors.dp-light-green'); /* Accent green */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .icon-small {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        /* Additional subtle tennis background pattern */
+        .tennis-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M6 6H0V0h6v6zM3 2.5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 3a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0-6a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1z'/%3E%3C/g%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-dp-dark-blue to-dp-deep-blue p-4 shadow-lg rounded-b-xl">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo from uploaded image -->
+            <img src="image_3f6638.png" alt="DP Tennis Center Logo" class="h-12 md:h-16 object-contain">
+            <nav>
+                <ul class="flex space-x-6">
+                    <li>
+                        <button id="home-nav-btn" class="flex items-center text-dp-text-light hover:text-dp-light-green transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-dp-light-green rounded-md p-2">
+                            <!-- Home icon (inline SVG from Lucide-React equivalent) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            Home
+                        </button>
+                    </li>
+                    <li>
+                        <button id="players-nav-btn" class="flex items-center text-dp-text-light hover:text-dp-light-green transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-dp-light-green rounded-md p-2">
+                            <!-- User icon (inline SVG from Lucide-React equivalent) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Players
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        <!-- Home Page Section -->
+        <section id="home-page" class="bg-white p-8 rounded-2xl shadow-xl mb-8 border-t-4 border-dp-dark-blue tennis-pattern">
+            <h2 class="text-4xl font-extrabold text-dp-dark-blue mb-6 text-center">Welcome to DP Tennis Center!</h2>
+            <p class="text-lg text-dp-text-dark leading-relaxed mb-6 text-center max-w-3xl mx-auto">
+                Your premier destination for tennis excellence. Whether you're a beginner looking to learn the basics or an experienced player aiming to refine your skills, our center provides top-notch coaching, facilities, and a vibrant community.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8 mt-10">
+                <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-md transform hover:scale-105 transition-transform duration-300 border border-dp-medium-gray">
+                    <!-- Phone icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-dp-dark-blue mb-4"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.67-2.94 19.5 19.5 0 0 1-2.94-3.67A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <h3 class="text-2xl font-semibold text-dp-dark-blue mb-3">Contact Us</h3>
+                    <p class="text-dp-text-dark text-lg">Have questions? Reach out to us!</p>
+                    <p class="text-xl font-bold text-dp-dark-blue mt-2">+91 6309729493</p>
+                    <p class="text-xl font-bold text-dp-dark-blue">+91 9848175452</p>
+                </div>
+
+                <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-md transform hover:scale-105 transition-transform duration-300 border border-dp-medium-gray">
+                    <!-- MapPin icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-dp-dark-blue mb-4"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <h3 class="text-2xl font-semibold text-dp-dark-blue mb-3">Find Us</h3>
+                    <p class="text-dp-text-dark text-lg">Visit our state-of-the-art facility:</p>
+                    <a href="https://maps.app.goo.gl/5oeuigAg3eMaaG1r9" target="_blank" rel="noopener noreferrer" class="text-xl font-bold text-dp-dark-blue mt-2 hover:underline">
+                        View on Google Maps
+                    </a>
+                </div>
+
+                <div class="md:col-span-2 flex flex-col items-center p-6 bg-white rounded-xl shadow-md transform hover:scale-105 transition-transform duration-300 border border-dp-medium-gray">
+                    <!-- Instagram icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-dp-dark-blue mb-4"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.5" y1="6.5" y2="6.5"/></svg>
+                    <h3 class="text-2xl font-semibold text-dp-dark-blue mb-3">Follow Us on Instagram</h3>
+                    <p class="text-dp-text-dark text-lg">Stay updated with our latest activities and achievements!</p>
+                    <a href="https://www.instagram.com/dp_tennis_center/" target="_blank" rel="noopener noreferrer" class="text-xl font-bold text-dp-dark-blue mt-2 hover:underline">
+                        @dp_tennis_center
+                    </a>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-xl mt-8 border-t-4 border-dp-medium-gray">
+                <h3 class="text-xl font-bold text-dp-text-dark mb-2">Your User ID (for data storage):</h3>
+                <p id="user-id-display" class="font-mono text-gray-600 break-words"></p>
+                <p class="text-sm text-gray-500 mt-2">
+                    This ID is used to store private data related to your session in Firestore.
+                </p>
+            </div>
+        </section>
+
+        <!-- Players List Section -->
+        <section id="players-page" class="hidden bg-white p-8 rounded-2xl shadow-xl mb-8 border-t-4 border-dp-dark-blue tennis-pattern">
+            <h2 class="text-4xl font-extrabold text-dp-dark-blue mb-8 text-center">Our Players</h2>
+            <div id="players-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Player cards will be loaded here by JavaScript -->
+            </div>
+            <div id="players-loading-spinner" class="flex justify-center items-center h-48">
+                <div class="loader"></div>
+                <span class="ml-2 text-lg text-dp-text-dark">Loading players...</span>
+            </div>
+            <p id="players-error-message" class="text-red-600 text-center mt-4 hidden">Failed to load players. Please try again later.</p>
+        </section>
+
+        <!-- Player Detail Section -->
+        <section id="player-detail-page" class="hidden bg-white p-8 rounded-2xl shadow-xl mb-8 border-t-4 border-dp-dark-blue tennis-pattern">
+            <button id="back-to-players-btn" class="flex items-center text-dp-dark-blue hover:text-dp-light-green transition-colors mb-6 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-dp-light-green">
+                <!-- ChevronLeft icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m15 18-6-6 6-6"/></svg>
+                Back to Players
+            </button>
+
+            <div id="player-detail-content">
+                <!-- Player details will be loaded here by JavaScript -->
+            </div>
+            <div id="player-detail-loading-spinner" class="flex justify-center items-center h-48">
+                <div class="loader"></div>
+                <span class="ml-2 text-lg text-dp-text-dark">Loading player details...</span>
+            </div>
+            <p id="player-detail-error-message" class="text-red-600 text-center mt-4 hidden">Failed to load player details.</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dp-dark-blue text-dp-text-light p-6 mt-8 rounded-t-xl shadow-inner">
+        <div class="container mx-auto text-center text-sm">
+            <p>&copy; <span id="current-year"></span> DP Tennis Center. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-2">
+                <a href="https://www.instagram.com/dp_tennis_center/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-dp-light-green transition-colors">
+                    <!-- Instagram icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.5" y1="6.5" y2="6.5"/></svg>
+                </a>
+                <a href="https://maps.app.goo.gl/5oeuigAg3eMaaG1r9" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-dp-light-green transition-colors">
+                    <!-- MapPin icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                </a>
+                <a href="tel:+916309729493" class="text-gray-400 hover:text-dp-light-green transition-colors">
+                    <!-- Phone icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.67-2.94 19.5 19.5 0 0 1-2.94-3.67A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </a>
+                <a href="mailto:info@dptennis.com" class="text-gray-400 hover:text-dp-light-green transition-colors">
+                    <!-- Mail icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase instances and user ID
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null;
+        let isAuthReady = false; // Flag to ensure Firestore operations wait for auth
+
+        // Get elements
+        const homePage = document.getElementById('home-page');
+        const playersPage = document.getElementById('players-page');
+        const playerDetailPage = document.getElementById('player-detail-page');
+        const homeNavBtn = document.getElementById('home-nav-btn');
+        const playersNavBtn = document.getElementById('players-nav-btn');
+        const backToPlayersBtn = document.getElementById('back-to-players-btn');
+        const playersListContainer = document.getElementById('players-list-container');
+        const playersLoadingSpinner = document.getElementById('players-loading-spinner');
+        const playersErrorMessage = document.getElementById('players-error-message');
+        const playerDetailContent = document.getElementById('player-detail-content');
+        const playerDetailLoadingSpinner = document.getElementById('player-detail-loading-spinner');
+        const playerDetailErrorMessage = document.getElementById('player-detail-error-message');
+        const userIdDisplay = document.getElementById('user-id-display');
+
+        // Function to navigate between sections
+        function navigateTo(page) {
+            homePage.classList.add('hidden');
+            playersPage.classList.add('hidden');
+            playerDetailPage.classList.add('hidden');
+
+            if (page === 'home') {
+                homePage.classList.remove('hidden');
+            } else if (page === 'players') {
+                playersPage.classList.remove('hidden');
+                loadPlayers(); // Load players data when navigating to players page
+            } else if (page === 'playerDetail') {
+                playerDetailPage.classList.remove('hidden');
+            }
+        }
+
+        // Initialize Firebase and Authentication
+        async function initializeFirebase() {
+            try {
+                // Mandatory global variables for Canvas environment
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+                if (!Object.keys(firebaseConfig).length) {
+                    console.error("Firebase config is missing or empty.");
+                    // Fallback to a non-interactive state or display an error
+                    userIdDisplay.textContent = "Firebase not configured.";
+                    return;
+                }
+
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Signed in anonymously.");
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        userIdDisplay.textContent = currentUserId;
+                    } else {
+                        // Fallback if not authenticated, generate a random UUID
+                        currentUserId = crypto.randomUUID();
+                        userIdDisplay.textContent = `Anonymous: ${currentUserId}`;
+                    }
+                    isAuthReady = true; // Auth state is ready
+                    console.log("Auth state changed. User ID:", currentUserId);
+                    // Reload players if on players page and auth just became ready
+                    if (!playersPage.classList.contains('hidden')) {
+                         loadPlayers();
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                userIdDisplay.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        // Add sample player data to Firestore if the collection is empty
+        async function addSamplePlayersIfEmpty() {
+            if (!isAuthReady || !db) {
+                console.warn("Firebase not ready to add sample data.");
+                return;
+            }
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const playersCollectionRef = collection(db, `artifacts/${appId}/public/data/players`);
+
+            try {
+                const docsSnap = await getDocs(playersCollectionRef);
+                if (docsSnap.empty) {
+                    console.log("No players found. Adding sample data...");
+                    const samplePlayers = [
+                        {
+                            name: "Rohan Sharma",
+                            profileImageUrl: "https://placehold.co/150x150/1A2F5B/82C033?text=RS", // Updated placeholder
+                            daysAttended: 45,
+                            matchesPlayed: 20,
+                            wins: 15,
+                            losses: 5,
+                            averagePerformance: "75%",
+                            weight: "70kg",
+                            bio: "A rising star with a powerful forehand and excellent court coverage. Rohan is known for his consistent baseline game.",
+                            recentMatches: [
+                                { date: "2025-06-10", opponent: "Arjun Reddy", score: "6-4, 6-2", result: "Win" },
+                                { date: "2025-06-05", opponent: "Priya Singh", score: "6-7, 6-3, 7-5", result: "Win" },
+                                { date: "2025-05-28", opponent: "Vijay Kumar", score: "3-6, 4-6", result: "Loss" },
+                            ]
+                        },
+                        {
+                            name: "Priya Singh",
+                            profileImageUrl: "https://placehold.co/150x150/1A2F5B/82C033?text=PS", // Updated placeholder
+                            daysAttended: 60,
+                            matchesPlayed: 25,
+                            wins: 18,
+                            losses: 7,
+                            averagePerformance: "72%",
+                            weight: "62kg",
+                            bio: "Priya is a strategic player with exceptional volleys and drop shots. Her finesse game often outsmarts opponents.",
+                            recentMatches: [
+                                { date: "2025-06-12", opponent: "Karthik Mehta", score: "7-5, 6-4", result: "Win" },
+                                { date: "2025-06-05", opponent: "Rohan Sharma", score: "7-6, 3-6, 5-7", result: "Loss" },
+                                { date: "2025-05-30", opponent: "Deepak Verma", score: "6-1, 6-0", result: "Win" },
+                            ]
+                        },
+                        {
+                            name: "Arjun Reddy",
+                            profileImageUrl: "https://placehold.co/150x150/1A2F5B/82C033?text=AR", // Updated placeholder
+                            daysAttended: 30,
+                            matchesPlayed: 12,
+                            wins: 8,
+                            losses: 4,
+                            averagePerformance: "67%",
+                            weight: "78kg",
+                            bio: "Arjun is an aggressive baseliner with a formidable serve. He is rapidly improving his tactical play.",
+                            recentMatches: [
+                                { date: "2025-06-10", opponent: "Rohan Sharma", score: "4-6, 2-6", result: "Loss" },
+                                { date: "2025-06-01", opponent: "Sneha Rao", score: "6-3, 6-4", result: "Win" },
+                                { date: "2025-05-25", opponent: "Amit Gupta", score: "6-2, 7-5", result: "Win" },
+                            ]
+                        }
+                    ];
+                    for (const player of samplePlayers) {
+                        await addDoc(playersCollectionRef, player);
+                    }
+                    console.log("Sample players added successfully.");
+                }
+            } catch (error) {
+                console.error("Error checking/adding sample data:", error);
+            }
+        }
+
+        // Load and display players from Firestore
+        function loadPlayers() {
+            if (!isAuthReady || !db) {
+                console.warn("Firebase not ready to load players.");
+                return;
+            }
+
+            playersListContainer.innerHTML = '';
+            playersLoadingSpinner.classList.remove('hidden');
+            playersErrorMessage.classList.add('hidden');
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const playersCollectionRef = collection(db, `artifacts/${appId}/public/data/players`);
+
+            // Use onSnapshot for real-time updates
+            onSnapshot(playersCollectionRef, (snapshot) => {
+                const playersData = [];
+                snapshot.forEach(doc => {
+                    playersData.push({ id: doc.id, ...doc.data() });
+                });
+                renderPlayers(playersData);
+                playersLoadingSpinner.classList.add('hidden');
+                if (playersData.length === 0) {
+                    playersErrorMessage.textContent = "No players found. Adding sample data now...";
+                    playersErrorMessage.classList.remove('hidden');
+                    addSamplePlayersIfEmpty(); // Attempt to add sample data if none exists
+                } else {
+                    playersErrorMessage.classList.add('hidden');
+                }
+            }, (error) => {
+                console.error("Error fetching players:", error);
+                playersLoadingSpinner.classList.add('hidden');
+                playersErrorMessage.textContent = "Failed to load players. " + error.message;
+                playersErrorMessage.classList.remove('hidden');
+            });
+        }
+
+        // Render player cards
+        function renderPlayers(players) {
+            playersListContainer.innerHTML = ''; // Clear previous content
+            if (players.length === 0) {
+                playersListContainer.innerHTML = '<p class="text-center text-dp-text-dark col-span-full">No players available.</p>';
+                return;
+            }
+            players.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'bg-white p-6 rounded-xl shadow-md cursor-pointer hover:shadow-lg transform hover:scale-102 transition-all duration-300 border-t-4 border-dp-light-green flex flex-col items-center text-center';
+                playerCard.dataset.playerId = player.id;
+                playerCard.innerHTML = `
+                    <img src="${player.profileImageUrl}" alt="${player.name}" class="w-32 h-32 rounded-full object-cover mb-4 border-4 border-dp-dark-blue shadow-lg">
+                    <h3 class="text-2xl font-semibold text-dp-dark-blue mb-2">${player.name}</h3>
+                    <p class="text-dp-text-dark"><span class="font-medium">Matches Played:</span> ${player.matchesPlayed}</p>
+                    <p class="text-dp-text-dark"><span class="font-medium">Wins:</span> ${player.wins}</p>
+                `;
+                playerCard.addEventListener('click', () => showPlayerDetail(player.id));
+                playersListContainer.appendChild(playerCard);
+            });
+        }
+
+        // Show individual player details
+        async function showPlayerDetail(playerId) {
+            if (!isAuthReady || !db) {
+                console.warn("Firebase not ready to show player details.");
+                return;
+            }
+
+            playerDetailContent.innerHTML = '';
+            playerDetailLoadingSpinner.classList.remove('hidden');
+            playerDetailErrorMessage.classList.add('hidden');
+            navigateTo('playerDetail');
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const playerDocRef = doc(db, `artifacts/${appId}/public/data/players`, playerId);
+
+            try {
+                const playerDoc = await getDoc(playerDocRef);
+                if (playerDoc.exists()) {
+                    const player = { id: playerDoc.id, ...playerDoc.data() };
+                    playerDetailContent.innerHTML = `
+                        <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8 bg-white p-8 rounded-2xl shadow-lg border-b-4 border-dp-light-green">
+                            <div class="flex-shrink-0">
+                                <img src="${player.profileImageUrl}" alt="${player.name}" class="w-48 h-48 rounded-full object-cover border-4 border-dp-dark-blue shadow-xl">
+                            </div>
+                            <div class="text-center md:text-left flex-grow">
+                                <h2 class="text-4xl font-extrabold text-dp-dark-blue mb-4">${player.name}</h2>
+                                <p class="text-lg text-dp-text-dark mb-4">${player.bio || 'No bio available.'}</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                                    <div class="bg-blue-50 p-4 rounded-lg shadow-sm">
+                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>Days Attended</h4>
+                                        <p class="text-xl text-dp-text-dark font-semibold">${player.daysAttended}</p>
+                                    </div>
+                                    <div class="bg-green-50 p-4 rounded-lg shadow-sm">
+                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2v20M17 5H7l5 5-5 5H17l-5 5"/></svg>Matches Played</h4>
+                                        <p class="text-xl text-dp-text-dark font-semibold">${player.matchesPlayed}</p>
+                                    </div>
+                                    <div class="bg-yellow-50 p-4 rounded-lg shadow-sm">
+                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Wins</h4>
+                                        <p class="text-xl text-dp-text-dark font-semibold">${player.wins}</p>
+                                    </div>
+                                    <div class="bg-red-50 p-4 rounded-lg shadow-sm">
+                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Losses</h4>
+                                        <p class="text-xl text-dp-text-dark font-semibold">${player.losses}</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg shadow-sm">
+                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M3 13.5V10a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M8 22H6a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2Z"/><path d="M18 22h-2a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2Z"/></svg>Average Performance</h4>
+                                        <p class="text-xl text-dp-text-dark font-semibold">${player.averagePerformance}</p>
+                                    </div>
+                                    <div class="bg-teal-50 p-4 rounded-lg shadow-sm">
+                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M10.083 8.647a1 1 0 0 0-.071 1.05L12.4 14H8a1 1 0 0 0-.85 1.48L10.083 19.36a1 1 0 0 0 1.834 0L15.85 15.48A1 1 0 0 0 15.001 14H10.4l2.389-4.303a1 1 0 0 0-.071-1.05z"/><path d="M12 2v2M4.22 4.22l1.42 1.42M2 12h2M4.22 19.78l1.42-1.42M12 22v-2M19.78 19.78l-1.42-1.42M22 12h-2M19.78 4.22l-1.42 1.42"/></svg>Weight</h4>
+                                        <p class="text-xl text-dp-text-dark font-semibold">${player.weight}</p>
+                                    </div>
+                                </div>
+
+                                <h3 class="text-2xl font-bold text-dp-dark-blue mb-3 border-b pb-2">Recent Match History</h3>
+                                <div class="space-y-3">
+                                    ${player.recentMatches && player.recentMatches.length > 0 ?
+                                        player.recentMatches.map(match => `
+                                            <div class="bg-dp-light-gray p-4 rounded-lg shadow-sm flex justify-between items-center border border-dp-medium-gray">
+                                                <div>
+                                                    <p class="font-semibold text-dp-text-dark">vs. ${match.opponent} (<span class="${match.result === 'Win' ? 'text-dp-light-green' : 'text-red-600'}">${match.result}</span>)</p>
+                                                    <p class="text-sm text-gray-500">${match.date}</p>
+                                                </div>
+                                                <p class="text-lg font-bold text-dp-text-dark">${match.score}</p>
+                                            </div>
+                                        `).join('')
+                                        : '<p class="text-dp-text-dark text-center">No recent match history available.</p>'
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    playerDetailErrorMessage.textContent = "Player not found.";
+                    playerDetailErrorMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Error fetching player details:", error);
+                playerDetailErrorMessage.textContent = "Failed to load player details. " + error.message;
+                playerDetailErrorMessage.classList.remove('hidden');
+            } finally {
+                playerDetailLoadingSpinner.classList.add('hidden');
+            }
+        }
+
+        // Event Listeners
+        homeNavBtn.addEventListener('click', () => navigateTo('home'));
+        playersNavBtn.addEventListener('click', () => navigateTo('players'));
+        backToPlayersBtn.addEventListener('click', () => navigateTo('players'));
+
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Initialize Firebase and navigate to home page on load
+        window.onload = async function() {
+            await initializeFirebase();
+            navigateTo('home');
+            // Ensure sample data is added if not present after Firebase is ready
+            // The onSnapshot in loadPlayers will also trigger it, but this is a direct check
+            if (isAuthReady) {
+                addSamplePlayersIfEmpty();
+            }
+        };
+
+    </script>
+</body>
+</html>
