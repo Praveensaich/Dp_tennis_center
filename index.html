@@ -6,7 +6,7 @@
     <title>DP Tennis Center</title>
     <!-- Tailwind CSS CDN for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script>
         // Custom Tailwind CSS configuration to match logo colors and Wimbledon aesthetic
         tailwind.config = {
@@ -18,13 +18,17 @@
                         'dp-light-green': '#82C033', // Light green from the logo
                         'dp-text-dark': '#333333', // Dark text for readability
                         'dp-text-light': '#ffffff', // Light text on dark backgrounds
-                        'dp-background-light': '#F8F8F8', // Lighter background for body
+                        'dp-background-light': '#FDFDFD', // Very light background for body, almost white
                         'dp-card-background': '#FFFFFF', // Pure white for cards/sections
                         'dp-subtle-border': '#EAEAEA', // Light border color
                         'dp-accent-gold': '#DAA520', // Subtle gold for royalty feel (e.g., hover states)
                         'dp-info-blue': '#2196F3', // Standard blue for general info
                         'dp-success-green': '#4CAF50', // Standard green for success/wins
                         'dp-error-red': '#F44336', // Standard red for errors/losses
+                    },
+                    boxShadow: {
+                        'custom-light': '0 4px 10px rgba(0, 0, 0, 0.05)',
+                        'custom-medium': '0 8px 20px rgba(0, 0, 0, 0.08)',
                     }
                 }
             }
@@ -68,30 +72,54 @@
         }
         /* Subtle tennis background pattern - adjusted opacity */
         .tennis-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.08' fill-rule='evenodd'%3E%3Cpath d='M6 6H0V0h6v6zM3 2.5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 3a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0-6a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1z'/%3E%3C/g%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M6 6H0V0h6v6zM3 2.5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 3a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0-6a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1z'/%3E%3C/g%3E%3C/svg%3E");
             background-repeat: repeat;
+        }
+
+        /* Hero section specific styles */
+        .hero-section {
+            background-image: url('https://placehold.co/1200x500/1A2F5B/82C033/png?text=Tennis+Court'); /* Placeholder for a tennis court image */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            z-index: 1;
+            border-radius: 1.5rem; /* Rounded corners for the entire section */
+            overflow: hidden; /* Ensures content stays within rounded corners */
+        }
+        .hero-overlay {
+            background-color: rgba(0, 0, 0, 0.4); /* Darker overlay for text readability */
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 3;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-dp-dark-blue to-dp-deep-blue p-4 shadow-lg rounded-b-xl">
+    <header class="bg-gradient-to-r from-dp-dark-blue to-dp-deep-blue p-4 shadow-custom-medium rounded-b-xl">
         <div class="container mx-auto flex justify-between items-center">
             <!-- Logo from uploaded image -->
-            <img src="image_3f6638.png" alt="DP Tennis Center Logo" class="h-14 md:h-20 object-contain">
+            <img src="image_3f6638.png" alt="DP Tennis Center Logo" class="h-16 md:h-20 object-contain">
             <nav>
-                <ul class="flex space-x-6">
+                <ul class="flex space-x-8">
                     <li>
-                        <button id="home-nav-btn" class="flex items-center text-dp-text-light text-lg font-medium hover:text-dp-light-green transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-dp-light-green rounded-md p-2">
+                        <button id="home-nav-btn" class="flex items-center text-dp-text-light text-xl font-medium hover:text-dp-light-green transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-dp-light-green rounded-md p-2">
                             <!-- Home icon (inline SVG from Lucide-React equivalent) -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                             Home
                         </button>
                     </li>
                     <li>
-                        <button id="players-nav-btn" class="flex items-center text-dp-text-light text-lg font-medium hover:text-dp-light-green transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-dp-light-green rounded-md p-2">
+                        <button id="players-nav-btn" class="flex items-center text-dp-text-light text-xl font-medium hover:text-dp-light-green transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-dp-light-green rounded-md p-2">
                             <!-- User icon (inline SVG from Lucide-React equivalent) -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             Players
                         </button>
                     </li>
@@ -101,45 +129,62 @@
     </header>
 
     <!-- Main Content Area -->
-    <main class="container mx-auto px-4 py-8 flex-grow">
+    <main class="container mx-auto px-4 py-10 flex-grow">
         <!-- Home Page Section -->
-        <section id="home-page" class="bg-dp-card-background p-8 rounded-2xl shadow-xl mb-8 border-t-4 border-dp-dark-blue tennis-pattern">
-            <h2 class="text-3xl md:text-4xl font-extrabold text-dp-dark-blue mb-6 text-center">Welcome to DP Tennis Center!</h2>
-            <p class="text-base md:text-lg text-dp-text-dark leading-relaxed mb-6 text-center max-w-3xl mx-auto">
-                Your premier destination for tennis excellence. Whether you're a beginner looking to learn the basics or an experienced player aiming to refine your skills, our center provides top-notch coaching, facilities, and a vibrant community.
-            </p>
-
-            <div class="grid md:grid-cols-2 gap-8 mt-10">
-                <div class="flex flex-col items-center p-6 bg-dp-card-background rounded-xl shadow-md transform hover:scale-105 transition-transform duration-300 border border-dp-subtle-border">
-                    <!-- Phone icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-dp-dark-blue mb-4"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.67-2.94 19.5 19.5 0 0 1-2.94-3.67A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    <h3 class="text-xl md:text-2xl font-semibold text-dp-dark-blue mb-3">Contact Us</h3>
-                    <p class="text-dp-text-dark text-base md:text-lg">Have questions? Reach out to us!</p>
-                    <p class="text-lg md:text-xl font-bold text-dp-dark-blue mt-2">+91 6309729493</p>
-                    <p class="text-lg md:text-xl font-bold text-dp-dark-blue">+91 9848175452</p>
-                </div>
-
-                <div class="flex flex-col items-center p-6 bg-dp-card-background rounded-xl shadow-md transform hover:scale-105 transition-transform duration-300 border border-dp-subtle-border">
-                    <!-- MapPin icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-dp-dark-blue mb-4"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <h3 class="text-xl md:text-2xl font-semibold text-dp-dark-blue mb-3">Find Us</h3>
-                    <p class="text-dp-text-dark text-base md:text-lg">Visit our state-of-the-art facility:</p>
-                    <a href="https://maps.app.goo.gl/5oeuigAg3eMaaG1r9" target="_blank" rel="noopener noreferrer" class="text-lg md:text-xl font-bold text-dp-dark-blue mt-2 hover:underline">
-                        View on Google Maps
-                    </a>
-                </div>
-
-                <div class="md:col-span-2 flex flex-col items-center p-6 bg-dp-card-background rounded-xl shadow-md transform hover:scale-105 transition-transform duration-300 border border-dp-subtle-border">
-                    <!-- Instagram icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-dp-dark-blue mb-4"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.5" y1="6.5" y2="6.5"/></svg>
-                    <h3 class="text-xl md:text-2xl font-semibold text-dp-dark-blue mb-3">Follow Us on Instagram</h3>
-                    <p class="text-dp-text-dark text-base md:text-lg">Stay updated with our latest activities and achievements!</p>
-                    <a href="https://www.instagram.com/dp_tennis_center/" target="_blank" rel="noopener noreferrer" class="text-lg md:text-xl font-bold text-dp-dark-blue mt-2 hover:underline">
-                        @dp_tennis_center
-                    </a>
+        <section id="home-page" class="bg-dp-card-background rounded-2xl shadow-custom-light mb-10 border-t-4 border-dp-dark-blue tennis-pattern">
+            <!-- Hero Section -->
+            <div class="hero-section text-dp-text-light flex items-center justify-center text-center p-10 md:p-20 h-[400px] md:h-[500px]">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <h2 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Experience Tennis Excellence</h2>
+                    <p class="text-lg md:text-xl font-light mb-8 max-w-2xl mx-auto">
+                        Join our vibrant community and unlock your full potential on the court.
+                    </p>
+                    <button id="explore-players-hero-btn" class="bg-dp-light-green text-dp-dark-blue font-bold py-3 px-8 rounded-full shadow-lg hover:bg-dp-accent-gold transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-dp-light-green focus:ring-opacity-50">
+                        Explore Our Players
+                    </button>
                 </div>
             </div>
-            <div class="bg-dp-card-background p-6 rounded-2xl shadow-xl mt-8 border-t-4 border-dp-subtle-border">
+
+            <div class="p-8">
+                <h3 class="text-3xl font-extrabold text-dp-dark-blue mb-8 text-center">About Our Center</h3>
+                <p class="text-base md:text-lg text-dp-text-dark leading-relaxed mb-10 text-center max-w-4xl mx-auto">
+                    DP Tennis Center is dedicated to fostering talent and passion for tennis. We offer world-class coaching, modern facilities, and a supportive environment for players of all ages and skill levels. Come and be a part of our winning legacy!
+                </p>
+
+                <div class="grid md:grid-cols-3 gap-8 mt-10">
+                    <div class="flex flex-col items-center p-6 bg-dp-card-background rounded-xl shadow-custom-light transform hover:scale-105 transition-transform duration-300 border border-dp-subtle-border">
+                        <!-- Phone icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="text-dp-dark-blue mb-4"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.67-2.94 19.5 19.5 0 0 1-2.94-3.67A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <h4 class="text-2xl font-semibold text-dp-dark-blue mb-3">Contact Us</h4>
+                        <p class="text-dp-text-dark text-lg">Reach out for inquiries:</p>
+                        <p class="text-xl font-bold text-dp-dark-blue mt-2">+91 6309729493</p>
+                        <p class="text-xl font-bold text-dp-dark-blue">+91 9848175452</p>
+                    </div>
+
+                    <div class="flex flex-col items-center p-6 bg-dp-card-background rounded-xl shadow-custom-light transform hover:scale-105 transition-transform duration-300 border border-dp-subtle-border">
+                        <!-- MapPin icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="text-dp-dark-blue mb-4"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <h4 class="text-2xl font-semibold text-dp-dark-blue mb-3">Find Our Location</h4>
+                        <p class="text-dp-text-dark text-lg">Visit our modern facility:</p>
+                        <a href="https://maps.app.goo.gl/5oeuigAg3eMaaG1r9" target="_blank" rel="noopener noreferrer" class="text-xl font-bold text-dp-dark-blue mt-2 hover:underline">
+                            View on Google Maps
+                        </a>
+                    </div>
+
+                    <div class="flex flex-col items-center p-6 bg-dp-card-background rounded-xl shadow-custom-light transform hover:scale-105 transition-transform duration-300 border border-dp-subtle-border">
+                        <!-- Instagram icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="text-dp-dark-blue mb-4"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.5" y1="6.5" y2="6.5"/></svg>
+                        <h4 class="text-2xl font-semibold text-dp-dark-blue mb-3">Follow Us</h4>
+                        <p class="text-dp-text-dark text-lg">Stay updated with news:</p>
+                        <a href="https://www.instagram.com/dp_tennis_center/" target="_blank" rel="noopener noreferrer" class="text-xl font-bold text-dp-dark-blue mt-2 hover:underline">
+                            @dp_tennis_center
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-dp-card-background p-6 rounded-2xl shadow-inner mt-10 border-t-4 border-dp-subtle-border">
                 <h3 class="text-lg font-bold text-dp-text-dark mb-2">Your User ID (for data storage):</h3>
                 <p id="user-id-display" class="font-mono text-gray-600 break-words text-sm"></p>
                 <p class="text-xs text-gray-500 mt-2">
@@ -149,7 +194,7 @@
         </section>
 
         <!-- Players List Section -->
-        <section id="players-page" class="hidden bg-dp-card-background p-8 rounded-2xl shadow-xl mb-8 border-t-4 border-dp-dark-blue tennis-pattern">
+        <section id="players-page" class="hidden bg-dp-card-background p-8 rounded-2xl shadow-custom-light mb-10 border-t-4 border-dp-dark-blue tennis-pattern">
             <h2 class="text-3xl md:text-4xl font-extrabold text-dp-dark-blue mb-8 text-center">Our Players</h2>
             
             <!-- Search Bar -->
@@ -173,7 +218,7 @@
         </section>
 
         <!-- Player Detail Section -->
-        <section id="player-detail-page" class="hidden bg-dp-card-background p-8 rounded-2xl shadow-xl mb-8 border-t-4 border-dp-dark-blue tennis-pattern">
+        <section id="player-detail-page" class="hidden bg-dp-card-background p-8 rounded-2xl shadow-custom-light mb-10 border-t-4 border-dp-dark-blue tennis-pattern">
             <button id="back-to-players-btn" class="flex items-center text-dp-dark-blue text-lg font-medium hover:text-dp-light-green transition-colors mb-6 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-dp-light-green">
                 <!-- ChevronLeft icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m15 18-6-6 6-6"/></svg>
@@ -257,6 +302,7 @@
         const playerDetailErrorMessage = document.getElementById('player-detail-error-message');
         const userIdDisplay = document.getElementById('user-id-display');
         const playerSearchInput = document.getElementById('player-search-input'); // New search input
+        const explorePlayersHeroBtn = document.getElementById('explore-players-hero-btn'); // New hero button
 
         // Function to navigate between sections
         function navigateTo(page) {
@@ -456,7 +502,7 @@
             }
             players.forEach(player => {
                 const playerCard = document.createElement('div');
-                playerCard.className = 'bg-dp-card-background p-6 rounded-xl shadow-md cursor-pointer hover:shadow-lg transform hover:scale-102 transition-all duration-300 border-t-4 border-dp-light-green flex flex-col items-center text-center';
+                playerCard.className = 'bg-dp-card-background p-6 rounded-xl shadow-custom-light cursor-pointer hover:shadow-custom-medium transform hover:scale-102 transition-all duration-300 border-t-4 border-dp-light-green flex flex-col items-center text-center';
                 playerCard.dataset.playerId = player.id;
                 playerCard.innerHTML = `
                     <img src="${player.profileImageUrl}" alt="${player.name}" class="w-32 h-32 rounded-full object-cover mb-4 border-4 border-dp-dark-blue shadow-lg">
@@ -489,7 +535,7 @@
                 if (playerDoc.exists()) {
                     const player = { id: playerDoc.id, ...playerDoc.data() };
                     playerDetailContent.innerHTML = `
-                        <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8 bg-dp-card-background p-8 rounded-2xl shadow-lg border-b-4 border-dp-light-green">
+                        <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8 bg-dp-card-background p-8 rounded-2xl shadow-custom-medium border-b-4 border-dp-light-green">
                             <div class="flex-shrink-0">
                                 <img src="${player.profileImageUrl}" alt="${player.name}" class="w-48 h-48 rounded-full object-cover border-4 border-dp-dark-blue shadow-xl">
                             </div>
@@ -558,6 +604,7 @@
         homeNavBtn.addEventListener('click', () => navigateTo('home'));
         playersNavBtn.addEventListener('click', () => navigateTo('players'));
         backToPlayersBtn.addEventListener('click', () => navigateTo('players'));
+        explorePlayersHeroBtn.addEventListener('click', () => navigateTo('players')); // New event listener for hero button
 
         // Add event listener for the search input
         playerSearchInput.addEventListener('input', filterAndRenderPlayers);
