@@ -50,7 +50,7 @@
             padding-left: 1.5rem;
             padding-right: 1.5rem;
         }
-        /* Custom spinner for loading states */
+        /* Custom spinner for loading states (will not be used as no database, but kept for consistency) */
         .loader {
             border: 4px solid theme('colors.dp-subtle-border'); /* Light grey */
             border-top: 4px solid theme('colors.dp-light-green'); /* Accent green */
@@ -184,13 +184,7 @@
                 </div>
             </div>
 
-            <div class="bg-dp-card-background p-6 rounded-2xl shadow-inner mt-10 border-t-4 border-dp-subtle-border">
-                <h3 class="text-lg font-bold text-dp-text-dark mb-2">Your User ID (for data storage):</h3>
-                <p id="user-id-display" class="font-mono text-gray-600 break-words text-sm"></p>
-                <p class="text-xs text-gray-500 mt-2">
-                    This ID is used to store public/private data related to your session in Firestore.
-                </p>
-            </div>
+            <!-- User ID section removed as Firebase is no longer used -->
         </section>
 
         <!-- Players List Section -->
@@ -210,7 +204,7 @@
             <div id="players-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Player cards will be loaded here by JavaScript -->
             </div>
-            <div id="players-loading-spinner" class="flex justify-center items-center h-48">
+            <div id="players-loading-spinner" class="hidden flex justify-center items-center h-48">
                 <div class="loader"></div>
                 <span class="ml-2 text-lg text-dp-text-dark">Loading players...</span>
             </div>
@@ -228,7 +222,7 @@
             <div id="player-detail-content">
                 <!-- Player details will be loaded here by JavaScript -->
             </div>
-            <div id="player-detail-loading-spinner" class="flex justify-center items-center h-48">
+            <div id="player-detail-loading-spinner" class="hidden flex justify-center items-center h-48">
                 <div class="loader"></div>
                 <span class="ml-2 text-lg text-dp-text-dark">Loading player details...</span>
             </div>
@@ -261,31 +255,9 @@
         </div>
     </footer>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global Firebase instances and user ID
-        let app;
-        let db;
-        let auth;
-        let currentUserId = null;
-        let isAuthReady = false; // Flag to ensure Firestore operations wait for auth
-        let allPlayersData = []; // Store all players data for search filtering
-
-        // >>>>>>>>>>>>>> IMPORTANT: PASTE YOUR FIREBASE CONFIG HERE <<<<<<<<<<<<<<
-        // Get this from your Firebase project settings -> Your apps -> Web app -> Config
-        const firebaseConfigLocal = {
-            apiKey: "YOUR_API_KEY", // Replace with your apiKey
-            authDomain: "YOUR_AUTH_DOMAIN", // Replace with your authDomain
-            projectId: "YOUR_PROJECT_ID", // Replace with your projectId
-            storageBucket: "YOUR_STORAGE_BUCKET", // Replace with your storageBucket
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // Replace with your messagingSenderId
-            appId: "YOUR_APP_ID" // Replace with your appId
-        };
-        // >>>>>>>>>>>>>> END OF FIREBASE CONFIG SECTION <<<<<<<<<<<<<<
+    <script>
+        // Global variables
+        let allPlayersData = []; // Store all players data for filtering
 
         // Get elements
         const homePage = document.getElementById('home-page');
@@ -300,9 +272,63 @@
         const playerDetailContent = document.getElementById('player-detail-content');
         const playerDetailLoadingSpinner = document.getElementById('player-detail-loading-spinner');
         const playerDetailErrorMessage = document.getElementById('player-detail-error-message');
-        const userIdDisplay = document.getElementById('user-id-display');
-        const playerSearchInput = document.getElementById('player-search-input'); // New search input
-        const explorePlayersHeroBtn = document.getElementById('explore-players-hero-btn'); // New hero button
+        const playerSearchInput = document.getElementById('player-search-input'); // Search input
+        const explorePlayersHeroBtn = document.getElementById('explore-players-hero-btn'); // Hero button
+
+        // Sample player data (hardcoded as no database is used)
+        const samplePlayers = [
+            {
+                id: "player1",
+                name: "Rohan Sharma",
+                profileImageUrl: "https://placehold.co/150x150/1A2F5B/82C033?text=RS",
+                daysAttended: 45,
+                matchesPlayed: 20,
+                wins: 15,
+                losses: 5,
+                averagePerformance: "75%",
+                weight: "70kg",
+                bio: "A rising star with a powerful forehand and excellent court coverage. Rohan is known for his consistent baseline game.",
+                recentMatches: [
+                    { date: "2025-06-10", opponent: "Arjun Reddy", score: "6-4, 6-2", result: "Win" },
+                    { date: "2025-06-05", opponent: "Priya Singh", score: "6-7, 6-3, 7-5", result: "Win" },
+                    { date: "2025-05-28", opponent: "Vijay Kumar", score: "3-6, 4-6", result: "Loss" },
+                ]
+            },
+            {
+                id: "player2",
+                name: "Priya Singh",
+                profileImageUrl: "https://placehold.co/150x150/1A2F5B/82C033?text=PS",
+                daysAttended: 60,
+                matchesPlayed: 25,
+                wins: 18,
+                losses: 7,
+                averagePerformance: "72%",
+                weight: "62kg",
+                bio: "Priya is a strategic player with exceptional volleys and drop shots. Her finesse game often outsmarts opponents.",
+                recentMatches: [
+                    { date: "2025-06-12", opponent: "Karthik Mehta", score: "7-5, 6-4", result: "Win" },
+                    { date: "2025-06-05", opponent: "Rohan Sharma", score: "7-6, 3-6, 5-7", result: "Loss" },
+                    { date: "2025-05-30", opponent: "Deepak Verma", score: "6-1, 6-0", result: "Win" },
+                ]
+            },
+            {
+                id: "player3",
+                name: "Arjun Reddy",
+                profileImageUrl: "https://placehold.co/150x150/1A2F5B/82C033?text=AR",
+                daysAttended: 30,
+                matchesPlayed: 12,
+                wins: 8,
+                losses: 4,
+                averagePerformance: "67%",
+                weight: "78kg",
+                bio: "Arjun is an aggressive baseliner with a formidable serve. He is rapidly improving his tactical play.",
+                recentMatches: [
+                    { date: "2025-06-10", opponent: "Rohan Sharma", score: "4-6, 2-6", result: "Loss" },
+                    { date: "2025-06-01", opponent: "Sneha Rao", score: "6-3, 6-4", result: "Win" },
+                    { date: "2025-05-25", opponent: "Amit Gupta", score: "6-2, 7-5", result: "Win" },
+                ]
+            }
+        ];
 
         // Function to navigate between sections
         function navigateTo(page) {
@@ -320,168 +346,24 @@
             }
         }
 
-        // Initialize Firebase and Authentication
-        async function initializeFirebase() {
-            try {
-                // Use local config if __firebase_config is not defined (i.e., running outside Canvas)
-                const firebaseConfig = typeof __firebase_config !== 'undefined'
-                    ? JSON.parse(__firebase_config)
-                    : firebaseConfigLocal;
-
-                // Use default-app-id if __app_id is not defined
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-                if (!firebaseConfig || !firebaseConfig.projectId || !firebaseConfig.apiKey) {
-                    console.error("Firebase config is missing or incomplete. Please provide your Firebase project details in the 'firebaseConfigLocal' variable.");
-                    userIdDisplay.textContent = "Firebase not configured. Check console for details.";
-                    return;
-                }
-
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    console.log("Signed in with custom token.");
-                } else {
-                    await signInAnonymously(auth);
-                    console.log("Signed in anonymously.");
-                }
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        userIdDisplay.textContent = currentUserId;
-                    } else {
-                        // Fallback if not authenticated, generate a random UUID
-                        currentUserId = crypto.randomUUID();
-                        userIdDisplay.textContent = `Anonymous: ${currentUserId}`;
-                    }
-                    isAuthReady = true; // Auth state is ready
-                    console.log("Auth state changed. User ID:", currentUserId);
-                    // Reload players if on players page and auth just became ready
-                    if (!playersPage.classList.contains('hidden')) {
-                         loadPlayers();
-                    }
-                });
-
-            } catch (error) {
-                console.error("Error initializing Firebase:", error);
-                userIdDisplay.textContent = `Error: ${error.message}`;
-            }
+        // Initialize players data (since no database)
+        function initializePlayersData() {
+            allPlayersData = [...samplePlayers]; // Copy sample data
         }
 
-        // Add sample player data to Firestore if the collection is empty
-        async function addSamplePlayersIfEmpty() {
-            if (!isAuthReady || !db) {
-                console.warn("Firebase not ready to add sample data.");
-                return;
-            }
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const playersCollectionRef = collection(db, `artifacts/${appId}/public/data/players`);
-
-            try {
-                const docsSnap = await getDocs(playersCollectionRef);
-                if (docsSnap.empty) {
-                    console.log("No players found. Adding sample data...");
-                    const samplePlayers = [
-                        {
-                            name: "Rohan Sharma",
-                            profileImageUrl: "https://placehold.co/150x150/1A2F5B/82C033?text=RS", // Updated placeholder
-                            daysAttended: 45,
-                            matchesPlayed: 20,
-                            wins: 15,
-                            losses: 5,
-                            averagePerformance: "75%",
-                            weight: "70kg",
-                            bio: "A rising star with a powerful forehand and excellent court coverage. Rohan is known for his consistent baseline game.",
-                            recentMatches: [
-                                { date: "2025-06-10", opponent: "Arjun Reddy", score: "6-4, 6-2", result: "Win" },
-                                { date: "2025-06-05", opponent: "Priya Singh", score: "6-7, 6-3, 7-5", result: "Win" },
-                                { date: "2025-05-28", opponent: "Vijay Kumar", score: "3-6, 4-6", result: "Loss" },
-                            ]
-                        },
-                        {
-                            name: "Priya Singh",
-                            profileImageUrl: "https://placehold.co/150x150/1A2F5B/82C033?text=PS", // Updated placeholder
-                            daysAttended: 60,
-                            matchesPlayed: 25,
-                            wins: 18,
-                            losses: 7,
-                            averagePerformance: "72%",
-                            weight: "62kg",
-                            bio: "Priya is a strategic player with exceptional volleys and drop shots. Her finesse game often outsmarts opponents.",
-                            recentMatches: [
-                                { date: "2025-06-12", opponent: "Karthik Mehta", score: "7-5, 6-4", result: "Win" },
-                                { date: "2025-06-05", opponent: "Rohan Sharma", score: "7-6, 3-6, 5-7", result: "Loss" },
-                                { date: "2025-05-30", opponent: "Deepak Verma", score: "6-1, 6-0", result: "Win" },
-                            ]
-                        },
-                        {
-                            name: "Arjun Reddy",
-                            profileImageUrl: "https://placehold.co/150x150/1A2F5B/82C033?text=AR", // Updated placeholder
-                            daysAttended: 30,
-                            matchesPlayed: 12,
-                            wins: 8,
-                            losses: 4,
-                            averagePerformance: "67%",
-                            weight: "78kg",
-                            bio: "Arjun is an aggressive baseliner with a formidable serve. He is rapidly improving his tactical play.",
-                            recentMatches: [
-                                { date: "2025-06-10", opponent: "Rohan Sharma", score: "4-6, 2-6", result: "Loss" },
-                                { date: "2025-06-01", opponent: "Sneha Rao", score: "6-3, 6-4", result: "Win" },
-                                { date: "2025-05-25", opponent: "Amit Gupta", score: "6-2, 7-5", result: "Win" },
-                            ]
-                        }
-                    ];
-                    for (const player of samplePlayers) {
-                        await addDoc(playersCollectionRef, player);
-                    }
-                    console.log("Sample players added successfully.");
-                }
-            } catch (error) {
-                console.error("Error checking/adding sample data:", error);
-            }
-        }
-
-        // Load and display players from Firestore
+        // Load and display players (now from local data)
         function loadPlayers() {
-            if (!isAuthReady || !db) {
-                console.warn("Firebase not ready to load players.");
-                return;
-            }
-
             playersListContainer.innerHTML = '';
-            playersLoadingSpinner.classList.remove('hidden');
+            // No loading spinner needed for local data, hide it if it's somehow visible
+            playersLoadingSpinner.classList.add('hidden');
             playersErrorMessage.classList.add('hidden');
 
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const playersCollectionRef = collection(db, `artifacts/${appId}/public/data/players`);
-
-            // Use onSnapshot for real-time updates
-            onSnapshot(playersCollectionRef, (snapshot) => {
-                allPlayersData = []; // Reset and populate allPlayersData
-                snapshot.forEach(doc => {
-                    allPlayersData.push({ id: doc.id, ...doc.data() });
-                });
-                filterAndRenderPlayers(); // Call filter function after data is loaded
-                playersLoadingSpinner.classList.add('hidden');
-                if (allPlayersData.length === 0) {
-                    playersErrorMessage.textContent = "No players found. Adding sample data now...";
-                    playersErrorMessage.classList.remove('hidden');
-                    addSamplePlayersIfEmpty(); // Attempt to add sample data if none exists
-                } else {
-                    playersErrorMessage.classList.add('hidden');
-                }
-            }, (error) => {
-                console.error("Error fetching players:", error);
-                playersLoadingSpinner.classList.add('hidden');
-                playersErrorMessage.textContent = "Failed to load players. " + error.message;
+            if (allPlayersData.length === 0) {
+                playersErrorMessage.textContent = "No players found. Please add some sample data in the script.";
                 playersErrorMessage.classList.remove('hidden');
-            });
+                return;
+            }
+            filterAndRenderPlayers(); // Call filter function after data is "loaded"
         }
 
         // Filter and render players based on search input
@@ -515,88 +397,72 @@
             });
         }
 
-        // Show individual player details
-        async function showPlayerDetail(playerId) {
-            if (!isAuthReady || !db) {
-                console.warn("Firebase not ready to show player details.");
-                return;
-            }
-
+        // Show individual player details (now from local data)
+        function showPlayerDetail(playerId) {
             playerDetailContent.innerHTML = '';
-            playerDetailLoadingSpinner.classList.remove('hidden');
+            playerDetailLoadingSpinner.classList.add('hidden'); // Hide spinner
             playerDetailErrorMessage.classList.add('hidden');
             navigateTo('playerDetail');
 
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const playerDocRef = doc(db, `artifacts/${appId}/public/data/players`, playerId);
+            const player = allPlayersData.find(p => p.id === playerId);
 
-            try {
-                const playerDoc = await getDoc(playerDocRef);
-                if (playerDoc.exists()) {
-                    const player = { id: playerDoc.id, ...playerDoc.data() };
-                    playerDetailContent.innerHTML = `
-                        <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8 bg-dp-card-background p-8 rounded-2xl shadow-custom-medium border-b-4 border-dp-light-green">
-                            <div class="flex-shrink-0">
-                                <img src="${player.profileImageUrl}" alt="${player.name}" class="w-48 h-48 rounded-full object-cover border-4 border-dp-dark-blue shadow-xl">
+            if (player) {
+                playerDetailContent.innerHTML = `
+                    <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8 bg-dp-card-background p-8 rounded-2xl shadow-custom-medium border-b-4 border-dp-light-green">
+                        <div class="flex-shrink-0">
+                            <img src="${player.profileImageUrl}" alt="${player.name}" class="w-48 h-48 rounded-full object-cover border-4 border-dp-dark-blue shadow-xl">
+                        </div>
+                        <div class="text-center md:text-left flex-grow">
+                            <h2 class="text-3xl md:text-4xl font-extrabold text-dp-dark-blue mb-4">${player.name}</h2>
+                            <p class="text-base md:text-lg text-dp-text-dark mb-4">${player.bio || 'No bio available.'}</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                                <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
+                                    <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>Days Attended</h4>
+                                    <p class="text-xl text-dp-text-dark font-semibold">${player.daysAttended}</p>
+                                </div>
+                                <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
+                                    <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2v20M17 5H7l5 5-5 5H17l-5 5"/></svg>Matches Played</h4>
+                                    <p class="text-xl text-dp-text-dark font-semibold">${player.matchesPlayed}</p>
+                                </div>
+                                <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
+                                    <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Wins</h4>
+                                    <p class="text-xl text-dp-text-dark font-semibold">${player.wins}</p>
+                                </div>
+                                <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
+                                    <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Losses</h4>
+                                    <p class="text-xl text-dp-text-dark font-semibold">${player.losses}</p>
+                                </div>
+                                <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
+                                    <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M3 13.5V10a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M8 22H6a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2Z"/><path d="M18 22h-2a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2Z"/></svg>Average Performance</h4>
+                                    <p class="text-xl text-dp-text-dark font-semibold">${player.averagePerformance}</p>
+                                </div>
+                                <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
+                                    <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M10.083 8.647a1 1 0 0 0-.071 1.05L12.4 14H8a1 1 0 0 0-.85 1.48L10.083 19.36a1 1 0 0 0 1.834 0L15.85 15.48A1 1 0 0 0 15.001 14H10.4l2.389-4.303a1 1 0 0 0-.071-1.05z"/><path d="M12 2v2M4.22 4.22l1.42 1.42M2 12h2M4.22 19.78l1.42-1.42M12 22v-2M19.78 19.78l-1.42-1.42M22 12h-2M19.78 4.22l-1.42 1.42"/></svg>Weight</h4>
+                                    <p class="text-xl text-dp-text-dark font-semibold">${player.weight}</p>
+                                </div>
                             </div>
-                            <div class="text-center md:text-left flex-grow">
-                                <h2 class="text-3xl md:text-4xl font-extrabold text-dp-dark-blue mb-4">${player.name}</h2>
-                                <p class="text-base md:text-lg text-dp-text-dark mb-4">${player.bio || 'No bio available.'}</p>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                                    <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
-                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>Days Attended</h4>
-                                        <p class="text-xl text-dp-text-dark font-semibold">${player.daysAttended}</p>
-                                    </div>
-                                    <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
-                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2v20M17 5H7l5 5-5 5H17l-5 5"/></svg>Matches Played</h4>
-                                        <p class="text-xl text-dp-text-dark font-semibold">${player.matchesPlayed}</p>
-                                    </div>
-                                    <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
-                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Wins</h4>
-                                        <p class="text-xl text-dp-text-dark font-semibold">${player.wins}</p>
-                                    </div>
-                                    <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
-                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Losses</h4>
-                                        <p class="text-xl text-dp-text-dark font-semibold">${player.losses}</p>
-                                    </div>
-                                    <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
-                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M3 13.5V10a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M8 22H6a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2Z"/><path d="M18 22h-2a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2Z"/></svg>Average Performance</h4>
-                                        <p class="text-xl text-dp-text-dark font-semibold">${player.averagePerformance}</p>
-                                    </div>
-                                    <div class="bg-dp-card-background p-4 rounded-lg shadow-sm border border-dp-subtle-border">
-                                        <h4 class="font-bold text-dp-dark-blue flex items-center mb-1 text-base"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M10.083 8.647a1 1 0 0 0-.071 1.05L12.4 14H8a1 1 0 0 0-.85 1.48L10.083 19.36a1 1 0 0 0 1.834 0L15.85 15.48A1 1 0 0 0 15.001 14H10.4l2.389-4.303a1 1 0 0 0-.071-1.05z"/><path d="M12 2v2M4.22 4.22l1.42 1.42M2 12h2M4.22 19.78l1.42-1.42M12 22v-2M19.78 19.78l-1.42-1.42M22 12h-2M19.78 4.22l-1.42 1.42"/></svg>Weight</h4>
-                                        <p class="text-xl text-dp-text-dark font-semibold">${player.weight}</p>
-                                    </div>
-                                </div>
 
-                                <h3 class="text-2xl font-bold text-dp-dark-blue mb-3 border-b-2 border-dp-subtle-border pb-2">Recent Match History</h3>
-                                <div class="space-y-3">
-                                    ${player.recentMatches && player.recentMatches.length > 0 ?
-                                        player.recentMatches.map(match => `
-                                            <div class="bg-dp-background-light p-4 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-center border border-dp-subtle-border">
-                                                <div class="mb-2 sm:mb-0 sm:text-left text-center">
-                                                    <p class="font-semibold text-dp-text-dark text-base">vs. ${match.opponent} (<span class="${match.result === 'Win' ? 'text-dp-success-green' : 'text-dp-error-red'}">${match.result}</span>)</p>
-                                                    <p class="text-sm text-gray-500">${match.date}</p>
-                                                </div>
-                                                <p class="text-xl font-bold text-dp-dark-blue">${match.score}</p>
+                            <h3 class="text-2xl font-bold text-dp-dark-blue mb-3 border-b-2 border-dp-subtle-border pb-2">Recent Match History</h3>
+                            <div class="space-y-3">
+                                ${player.recentMatches && player.recentMatches.length > 0 ?
+                                    player.recentMatches.map(match => `
+                                        <div class="bg-dp-background-light p-4 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-center border border-dp-subtle-border">
+                                            <div class="mb-2 sm:mb-0 sm:text-left text-center">
+                                                <p class="font-semibold text-dp-text-dark text-base">vs. ${match.opponent} (<span class="${match.result === 'Win' ? 'text-dp-success-green' : 'text-dp-error-red'}">${match.result}</span>)</p>
+                                                <p class="text-sm text-gray-500">${match.date}</p>
                                             </div>
-                                        `).join('')
-                                        : '<p class="text-dp-text-dark text-center">No recent match history available.</p>'
-                                    }
-                                </div>
+                                            <p class="text-xl font-bold text-dp-dark-blue">${match.score}</p>
+                                        </div>
+                                    `).join('')
+                                    : '<p class="text-dp-text-dark text-center">No recent match history available.</p>'
+                                }
                             </div>
                         </div>
-                    `;
-                } else {
-                    playerDetailErrorMessage.textContent = "Player not found.";
-                    playerDetailErrorMessage.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error("Error fetching player details:", error);
-                playerDetailErrorMessage.textContent = "Failed to load player details. " + error.message;
+                    </div>
+                `;
+            } else {
+                playerDetailErrorMessage.textContent = "Player not found.";
                 playerDetailErrorMessage.classList.remove('hidden');
-            } finally {
-                playerDetailLoadingSpinner.classList.add('hidden');
             }
         }
 
@@ -612,12 +478,10 @@
         // Set current year in footer
         document.getElementById('current-year').textContent = new Date().getFullYear();
 
-        // Initialize Firebase and navigate to home page on load
-        window.onload = async function() {
-            await initializeFirebase();
+        // Initialize players data and navigate to home page on load
+        window.onload = function() {
+            initializePlayersData(); // Populate local player data
             navigateTo('home');
-            // addSamplePlayersIfEmpty() is called after auth is ready within onSnapshot in loadPlayers.
-            // This ensures data is added only once and after Firebase is fully operational.
         };
 
     </script>
